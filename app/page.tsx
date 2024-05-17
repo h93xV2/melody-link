@@ -8,6 +8,7 @@ import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 import { Authenticator } from '@aws-amplify/ui-react'
 import "@aws-amplify/ui-react/styles.css";
+import { uploadData } from 'aws-amplify/storage';
 
 Amplify.configure(outputs);
 
@@ -37,23 +38,10 @@ export default function App() {
   }
 
   return (
-    <Authenticator>
+    <Authenticator signUpAttributes={['email', 'preferred_username']}>
       {({ signOut, user }) => (
         <main>
-          <h1>{user?.signInDetails?.loginId}'s todos</h1>
-          <button onClick={createTodo}>+ new</button>
-          <ul>
-            {todos.map((todo) => (
-              <li onClick={() => deleteTodo(todo.id)} key={todo.id}>{todo.content}</li>
-            ))}
-          </ul>
-          <div>
-            🥳 App successfully hosted. Try creating a new todo.
-            <br />
-            <a href="https://docs.amplify.aws/nextjs/start/quickstart/nextjs-app-router-client-components/">
-              Review next steps of this tutorial.
-            </a>
-          </div>
+          <h1>{user?.username}</h1>
           <button onClick={signOut}>Sign Out</button>
         </main>
       )}
