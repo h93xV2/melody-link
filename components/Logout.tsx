@@ -12,7 +12,7 @@ export default function Logout() {
         await signOut();
         router.push("/login");
       }}
-      className="px-2 bg-white text-black"
+      className="button is-primary"
     >
       Sign out
     </button>
