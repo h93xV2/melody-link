@@ -1,6 +1,6 @@
 "use client";
 
-import { withAuthenticator } from "@aws-amplify/ui-react";
+import { Authenticator } from "@aws-amplify/ui-react";
 import { AuthUser } from "aws-amplify/auth";
 
 import '@aws-amplify/ui-react/styles.css';
@@ -16,7 +16,15 @@ function Login({ user }: { user?: AuthUser }) {
     }
   }, [user]);
 
-  return <div></div>;
+  return <></>;
 }
 
-export default withAuthenticator(Login);
+function LoginWrapper() {
+  return <Authenticator>
+    {({user}) => {
+      return <Login user={user} />
+    }}
+  </Authenticator>
+}
+
+export default LoginWrapper;

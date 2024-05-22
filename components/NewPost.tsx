@@ -7,6 +7,8 @@ import { StorageManager } from "@aws-amplify/ui-react-storage";
 import 'bulma/css/bulma.min.css';
 import { usePathname } from 'next/navigation';
 import { RemoveWithPathOutput, list, remove } from 'aws-amplify/storage';
+import { generateClient } from 'aws-amplify/data';
+import { type Schema } from '../amplify/data/resource'
 
 type File = {
   path: string
@@ -17,7 +19,7 @@ const NewPost = () => {
 
   const removeTrack = (name: string) => {
     remove({
-      path: ({identityId}) => `audio/${identityId}/${name}`
+      path: ({identityId}) => `audio/private/${identityId}/${name}`
     }).then((result: RemoveWithPathOutput) => {
       const fileNameToIndex: Map<string, number> =
         files.reduce((map, item) => map.set(item.path, files.indexOf(item)), new Map());
@@ -37,7 +39,7 @@ const NewPost = () => {
 
   useEffect(() => {
     list({
-      path: ({identityId}) => `audio/${identityId}/`
+      path: ({identityId}) => `audio/private/${identityId}/`
     }).then((result) => {
       if (result) {
         const filesToSet: File[] = Array.from(result.items).map(item => {
@@ -54,7 +56,13 @@ const NewPost = () => {
       alert('Title and at least one track are required!');
       return;
     }
-    console.log({ title, description, tags, files });
+    const client = generateClient<Schema>();
+    client.models.Post.create({
+      title,
+      description,
+      tags: tags.split(","),
+      tracks: files.map(file => file.path)
+    });
   };
 
   const removeTracks = (filesToRemove: File[]) => {
@@ -149,7 +157,7 @@ const NewPost = () => {
               <label className="label">Upload</label>
               <StorageManager
                 acceptedFileTypes={['audio/*']}
-                path={({identityId}) => `audio/${identityId}/`}
+                path={({identityId}) => `audio/private/${identityId}/`}
                 maxFileCount={3}
                 isResumable
                 onUploadSuccess={(event) => {

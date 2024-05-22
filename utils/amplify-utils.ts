@@ -44,7 +44,7 @@ export async function getCurrentUserFiles() {
   try {
     const files = await runWithAmplifyServerContext({
       nextServerContext: { cookies },
-      operation: async (contextSpec) => await list(contextSpec, { path: ({identityId}) => `audio/${identityId}/` })
+      operation: async (contextSpec) => await list(contextSpec, { path: ({identityId}) => `audio/private/${identityId}/` })
     });
 
     return files;
