@@ -6,7 +6,7 @@ export const storage = defineStorage({
     'audio/private/{entity_id}/*': [
       allow.entity('identity').to(["read","write","delete"]),
     ],
-    'audio/public/${entity_id}/*': [
+    'audio/public/{entity_id}/*': [
       allow.entity('identity').to(["read", "write", "delete"]),
       allow.guest.to(["read"])
     ]
