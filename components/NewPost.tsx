@@ -14,7 +14,7 @@ type File = {
   path: string
 };
 
-const createPost = async (title: string, description: string, tags: string, files: File[]) => {
+const createPost = async (userName: string, title: string, description: string, tags: string, files: File[]) => {
   const client = generateClient<Schema>();
   const trackNames = files.map(file => file.path.split("/")[3]);
   const tracks: string[] = [];
@@ -43,7 +43,7 @@ const createPost = async (title: string, description: string, tags: string, file
   });
 };
 
-const NewPost = () => {
+const NewPost = (props: {userName: string}) => {
   const pathname = usePathname();
 
   const removeTrack = (name: string) => {
@@ -85,7 +85,7 @@ const NewPost = () => {
       alert('Title and at least one track are required!');
       return;
     }
-    createPost(title, description, tags, files).then(() => {
+    createPost(props.userName, title, description, tags, files).then(() => {
       ref.current.clearFiles();
       setTitle("");
       setDescription("");

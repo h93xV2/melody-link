@@ -4,7 +4,7 @@ import { Tabs } from "@aws-amplify/ui-react";
 import { useState } from "react";
 import NewPost from "./NewPost";
 
-function ProfileTabs() {
+function ProfileTabs(props: {userName: string}) {
   const [tab, setTab] = useState('1');
 
   return (
@@ -17,7 +17,7 @@ function ProfileTabs() {
         {
           label: "Create New Post",
           value: '1',
-          content: <NewPost />
+          content: <NewPost userName={props.userName} />
         },
         {
           label: "Your Posts",

@@ -5,13 +5,14 @@ import { generateClient } from "aws-amplify/api";
 
 import "@aws-amplify/ui-react/styles.css";
 import { useEffect, useState } from "react";
+import { getCurrentUser } from "aws-amplify/auth";
 
 type Post = {
   title: string,
   description: string,
   tags: string[],
   tracks: string[],
-  // TODO: Add artist name
+  artist: string
 };
 
 export default function App() {
@@ -20,26 +21,34 @@ export default function App() {
   useEffect(() => {
     const client = generateClient<Schema>();
     const results: Post[] = [];
+    let authMode: any;
 
-    client.models.Post.list({authMode: 'identityPool'}).then((result) => {
-      result.data.forEach(post => {
-        if (post.title && post.description && post.tags && post.tracks && post.owner) {
-          results.push({
-            title: post.title,
-            description: post.description,
-            tags: post.tags as string[],
-            tracks: post.tracks as string[]
-          });
+    getCurrentUser().then((result) => {
+      authMode = "userPool";
+    }).catch((reason) => {
+      authMode = "identityPool";
+    }).finally(() => {
+      client.models.Post.list({authMode}).then((result) => {
+        result.data.forEach(post => {
+          if (post.title && post.description && post.tags && post.tracks && post.artist) {
+            results.push({
+              title: post.title,
+              description: post.description,
+              tags: post.tags as string[],
+              tracks: post.tracks as string[],
+              artist: post.artist
+            });
+          }
+        });
+  
+        if (result.errors) {
+          console.error("Problem reading posts %o", result.errors);
         }
-      });
-
-      if (result.errors) {
-        console.error("Problem reading posts %o", result.errors);
-      }
-
-      setPosts([...results]);
-    }).catch(console.error);
-  }, [])
+  
+        setPosts([...results]);
+      }).catch(console.error);
+    });
+  }, []);
 
   return (
     <main>
@@ -50,7 +59,7 @@ export default function App() {
             return (<li key={postKey} className="mb-3">
               <div className="card">
                 <div className="card-content">
-                  <h2 className="is-size-2">{post.title}</h2>
+                  <h2 className="is-size-2">{post.artist} - {post.title}</h2>
                   <div className="mb-2">
                     { post.tags.map((tag, tagKey) => <span className="tag mr-1" key={tagKey}>#{tag}</span>) }
                   </div>

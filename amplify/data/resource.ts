@@ -7,7 +7,7 @@ const schema = a.schema({
       description: a.string(),
       tags: a.string().array(),
       tracks: a.string().array(),
-      // TODO: Add artist name
+      artist: a.string()
     })
     .authorization((allow) => [allow.owner(), allow.guest().to(["read"]), allow.authenticated().to(["read"])]),
 });
