@@ -6,12 +6,41 @@ import { StorageManager } from "@aws-amplify/ui-react-storage";
 
 import 'bulma/css/bulma.min.css';
 import { usePathname } from 'next/navigation';
-import { RemoveWithPathOutput, list, remove } from 'aws-amplify/storage';
+import { RemoveWithPathOutput, list, remove, copy } from 'aws-amplify/storage';
 import { generateClient } from 'aws-amplify/data';
 import { type Schema } from '../amplify/data/resource'
 
 type File = {
   path: string
+};
+
+const createPost = async (title: string, description: string, tags: string, files: File[]) => {
+  const client = generateClient<Schema>();
+  const trackNames = files.map(file => file.path.split("/")[3]);
+  const tracks: string[] = [];
+  
+  for (let i = 0; i < trackNames.length; i ++) {
+    const track = trackNames[i];
+
+    const result = await copy({
+      source: {
+        path: ({identityId}) => `audio/private/${identityId}/${track}`
+      },
+      destination: {
+        path: ({identityId}) => `audio/public/${identityId}/${track}`
+      }
+    });
+
+    tracks.push(result.path);
+  }
+
+  client.models.Post.create({
+    title,
+    description,
+    tags: tags.split(","),
+    tracks,
+    // TODO: Add artist name
+  });
 };
 
 const NewPost = () => {
@@ -56,21 +85,36 @@ const NewPost = () => {
       alert('Title and at least one track are required!');
       return;
     }
-    const client = generateClient<Schema>();
-    client.models.Post.create({
-      title,
-      description,
-      tags: tags.split(","),
-      tracks: files.map(file => file.path)
+    createPost(title, description, tags, files).then(() => {
+      ref.current.clearFiles();
+      setTitle("");
+      setDescription("");
+      setTags("");
+      setFiles([]);
+      removeTracks(files);
+      document.getElementById("success-modal")?.classList.add("is-active");
     });
   };
 
   const removeTracks = (filesToRemove: File[]) => {
-    filesToRemove.forEach((file) => removeTrack(file.path.split("/")[2]));
+    filesToRemove.forEach((file) => removeTrack(file.path.split("/")[3]));
   };
 
   return (
     <div className="container mt-5">
+      <div className="modal" id="success-modal">
+        <div className="modal-background"></div>
+        <div className="modal-content">
+        <div className="notification is-primary">
+          <button
+            className="delete"
+            onClick={() => document.getElementById("success-modal")?.classList.remove("is-active")}
+          />
+          Congrats! Your post has been published successfully.
+        </div>
+        </div>
+        <button className="modal-close is-large" aria-label="close"></button>
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="columns">
           <div className="column is-half">
@@ -139,7 +183,7 @@ const NewPost = () => {
               <label className="label">Tracks (x{files.length})</label>
               <div className="control">
                 {files.map((file, index) => {
-                  const name = file.path.split("/")[2];
+                  const name = file.path.split("/")[3];
                   return (
                     <div className="columns" key={index}>
                       <span className="column">{name}</span>

@@ -15,9 +15,14 @@ function ProfileTabs() {
       spacing="equal"
       items={[
         {
-          label: 'New Post',
+          label: "Create New Post",
           value: '1',
           content: <NewPost />
+        },
+        {
+          label: "Your Posts",
+          value: "2",
+          content: "Your posts here"
         }
       ]}
     />

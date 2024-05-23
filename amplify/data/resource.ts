@@ -6,9 +6,10 @@ const schema = a.schema({
       title: a.string(),
       description: a.string(),
       tags: a.string().array(),
-      tracks: a.string().array()
+      tracks: a.string().array(),
+      // TODO: Add artist name
     })
-    .authorization((allow) => [allow.owner(), allow.guest().to(["read"])]),
+    .authorization((allow) => [allow.owner(), allow.guest().to(["read"]), allow.authenticated().to(["read"])]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
