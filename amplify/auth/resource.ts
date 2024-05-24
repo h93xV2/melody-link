@@ -12,6 +12,7 @@ export const auth = defineAuth({
     preferredUsername: {
       mutable: true,
       required: true
+      // TODO: Make this unique
     }
   }
 });

@@ -27,7 +27,7 @@ const createPost = async (userName: string, title: string, description: string, 
         path: ({identityId}) => `audio/private/${identityId}/${track}`
       },
       destination: {
-        path: ({identityId}) => `audio/public/${identityId}/${track}`
+        path: `audio/public/${track}`
       }
     });
 
@@ -39,7 +39,7 @@ const createPost = async (userName: string, title: string, description: string, 
     description,
     tags: tags.split(","),
     tracks,
-    // TODO: Add artist name
+    artist: userName
   });
 };
 
@@ -120,7 +120,7 @@ const NewPost = (props: {userName: string}) => {
           <div className="column is-half">
             <h1 className="title">Create New Post</h1>
             <div className="field">
-              <label className="label">Title</label>
+              <label className="label">Title*</label>
               <div className="control">
                 <input
                   className="input"
@@ -180,7 +180,7 @@ const NewPost = (props: {userName: string}) => {
           </div>
           <div className="column">
             <div className="field">
-              <label className="label">Tracks (x{files.length})</label>
+              <label className="label">Tracks* (x{files.length})</label>
               <div className="control">
                 {files.map((file, index) => {
                   const name = file.path.split("/")[3];
