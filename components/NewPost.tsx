@@ -14,7 +14,7 @@ type File = {
   path: string
 };
 
-const createPost = async (userName: string, title: string, description: string, tags: string, files: File[]) => {
+const createPost = async (userName: string, title: string, description: string, files: File[]) => {
   const client = generateClient<Schema>();
   const trackNames = files.map(file => file.path.split("/")[3]);
   const tracks: string[] = [];
@@ -37,7 +37,6 @@ const createPost = async (userName: string, title: string, description: string, 
   client.models.Post.create({
     title,
     description,
-    tags: tags.split(","),
     tracks,
     artist: userName
   });
@@ -62,7 +61,6 @@ const NewPost = (props: {userName: string}) => {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [tags, setTags] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const ref: MutableRefObject<any | null> = useRef(null);
 
@@ -85,11 +83,10 @@ const NewPost = (props: {userName: string}) => {
       alert('Title and at least one track are required!');
       return;
     }
-    createPost(props.userName, title, description, tags, files).then(() => {
+    createPost(props.userName, title, description, files).then(() => {
       ref.current.clearFiles();
       setTitle("");
       setDescription("");
-      setTags("");
       setFiles([]);
       removeTracks(files);
       document.getElementById("success-modal")?.classList.add("is-active");
@@ -141,19 +138,6 @@ const NewPost = (props: {userName: string}) => {
                   placeholder="Enter a description (optional)"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="field">
-              <label className="label">Tags</label>
-              <div className="control">
-                <input
-                  className="input"
-                  type="text"
-                  placeholder="Enter tags separated by commas"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
                 />
               </div>
             </div>

@@ -53,7 +53,7 @@ const getPosts = async (authMode: any): Promise<Post[]> => {
 
         if (track) {
           tracks.push({
-            name: track.split("/")[3],
+            name: track.split("/")[2],
             path: track
           })
         }
@@ -73,6 +73,32 @@ const getPosts = async (authMode: any): Promise<Post[]> => {
   return posts;
 };
 
+const trackNameToHowl: Map<string, Howl> = new Map();
+
+const handleSongClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const name = event.currentTarget.dataset.name;
+  const path = event.currentTarget.dataset.path;
+
+  if (name && path) {
+    if (!trackNameToHowl.has(name)) {
+      const url = await getUrl({path});
+
+      trackNameToHowl.set(name, new Howl({
+        src: url.url.href,
+        onload: (soundId) => console.log("Track loaded")
+      }));
+    }
+
+    const howl = trackNameToHowl.get(name);
+
+    if (howl) {
+      Howler.stop();
+
+      howl.play();
+    }
+  }
+};
+
 export default function App() {
   const [posts, setPosts] = useState<Post[]>([]);
 
@@ -90,26 +116,10 @@ export default function App() {
     });
   }, []);
 
-  const handleSongClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const path = event.currentTarget.dataset.path;
-
-    if (path) {
-      getUrl({path}).then((result) => {
-        Howler.stop();
-
-        const sound = new Howl({
-          src: result.url.href
-        });
-
-        sound.play();
-      });
-    }
-  };
-
   return (
     <main>
       <h1 className="title is-size-1">MelodyLink</h1>
-      <ul>
+      <ul style={{maxWidth:"800px",marginLeft:"auto",marginRight:"auto"}}>
         {
           posts.map((post, postKey) => {
             return (<li key={postKey} className="mb-3">
@@ -125,12 +135,20 @@ export default function App() {
                     }
                   </div>
                   <p>{post.description}</p>
+                  <hr />
                   <ul>
                     {
                       post.tracks.map((track, trackKey) => {
                         return (<li key={trackKey}>
-                          <p>{track.name}</p>
-                          <button className="button" onClick={handleSongClick} data-path={track.path}>Play</button>
+                          <button
+                            className="button is-small mr-2"
+                            onClick={handleSongClick}
+                            data-name={track.name}
+                            data-path={track.path}
+                          >
+                            Play
+                          </button>
+                          {track.name}
                         </li>);
                       })
                     }

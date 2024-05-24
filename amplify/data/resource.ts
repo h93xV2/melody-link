@@ -5,7 +5,6 @@ const schema = a.schema({
     .model({
       title: a.string().required(),
       description: a.string(),
-      tags: a.string().array(),
       tracks: a.string().array().required(),
       artist: a.string().required()
     })
