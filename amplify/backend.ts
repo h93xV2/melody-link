@@ -16,7 +16,7 @@ const statement = new PolicyStatement({
   actions: [
     "cognito-idp:ListUsers"
   ],
-  resources: [backend.auth.resources.userPool.userPoolArn]
+  resources: ["*"]
 })
 
 backend.preSignUp.resources.lambda.addToRolePolicy(statement);
