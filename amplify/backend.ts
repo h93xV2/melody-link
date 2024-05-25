@@ -3,8 +3,14 @@ import { auth } from './auth/resource.js';
 import { data } from './data/resource.js';
 import { storage } from './storage/resource';
 
-defineBackend({
+const backend = defineBackend({
   auth,
   data,
   storage
 });
+
+const { cfnUserPool } = backend.auth.resources.cfnResources
+
+cfnUserPool.usernameAttributes = [
+  "preferred_username"
+];
