@@ -20,7 +20,7 @@ function Login({ user }: { user?: AuthUser }) {
 }
 
 function LoginWrapper() {
-  return <Authenticator>
+  return <Authenticator signUpAttributes={[]}>
     {({user}) => {
       return <Login user={user} />
     }}
