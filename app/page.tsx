@@ -20,7 +20,6 @@ type Track = {
 type Post = {
   title: string,
   description?: string,
-  tags?: string[],
   tracks: Track[],
   artist: string,
   createdAt: string
@@ -38,14 +37,6 @@ const getPosts = async (authMode: any): Promise<Post[]> => {
   for (let i = 0; i < data.length; i ++) {
     const result = data[i];
     if (result.title && result.artist) {
-      const tags: string[] = [];
-
-      result.tags?.forEach(tag => {
-        if (tag) {
-          tags.push(tag);
-        }
-      });
-
       const tracks: Track[] = [];
 
       for (let j = 0; j < result.tracks.length; j ++) {
@@ -62,7 +53,6 @@ const getPosts = async (authMode: any): Promise<Post[]> => {
       posts.push({
         title: result.title,
         description: result.description ? result.description : undefined,
-        tags: tags.length > 0 ? tags : undefined,
         tracks,
         artist: result.artist,
         createdAt: result.createdAt
@@ -127,13 +117,6 @@ export default function App() {
                 <div className="card-content">
                   <h2 className="is-size-2">{post.artist} - {post.title}</h2>
                   <p>Uploaded <i>{new Date(post.createdAt).toDateString()}</i></p>
-                  <div className="mb-2">
-                    {
-                      post.tags && post.tags.map((tag, tagKey) => {
-                        return <span className="tag mr-1" key={tagKey}>#{tag}</span>;
-                      })
-                    }
-                  </div>
                   <p>{post.description}</p>
                   <hr />
                   <ul>
