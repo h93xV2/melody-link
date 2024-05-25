@@ -11,7 +11,6 @@ export const handler: PreSignUpTriggerHandler = async (event) => {
     AttributesToGet: [ // SearchedAttributeNamesListType
       "preferred_username",
     ],
-    Filter: "STRING_VALUE",
   };
   const command = new ListUsersCommand(input);
   const response = await client.send(command);
