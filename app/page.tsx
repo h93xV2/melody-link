@@ -65,7 +65,10 @@ export default function App() {
     <main>
       <ul style={{maxWidth:"800px",marginLeft:"auto",marginRight:"auto"}}>
         {
-          posts.map((post, postKey) => {
+          posts.length === 0 && <h2 className="is-size-2 has-text-centered">No one's posted yet 😢</h2>
+        }
+        {
+          posts.length > 0 && posts.map((post, postKey) => {
             return (<li key={postKey} className="mb-3">
               <div className="card">
                 <div className="card-content">
