@@ -2,72 +2,24 @@
 
 import React from "react";
 
-import { Schema } from "@/amplify/data/resource";
-import { generateClient } from "aws-amplify/api";
-
 import "@aws-amplify/ui-react/styles.css";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "aws-amplify/auth";
 import { getUrl } from "aws-amplify/storage";
 
-import {Howl, Howler} from "howler";
-
-type Track = {
-  name: string,
-  path: string
-};
-
-type Post = {
-  title: string,
-  description?: string,
-  tracks: Track[],
-  artist: string,
-  createdAt: string
-};
-
-const getPosts = async (authMode: any): Promise<Post[]> => {
-  const client = generateClient<Schema>();
-  const {data, errors} = (await client.models.Post.list({authMode}));
-  const posts: Post[] = [];
-
-  if (errors) {
-    console.error("Unable to list posts: %o", errors);
-  }
-
-  for (let i = 0; i < data.length; i ++) {
-    const result = data[i];
-    if (result.title && result.artist) {
-      const tracks: Track[] = [];
-
-      for (let j = 0; j < result.tracks.length; j ++) {
-        const track = result.tracks[j];
-
-        if (track) {
-          tracks.push({
-            name: track.split("/")[2],
-            path: track
-          })
-        }
-      };
-
-      posts.push({
-        title: result.title,
-        description: result.description ? result.description : undefined,
-        tracks,
-        artist: result.artist,
-        createdAt: result.createdAt
-      });
-    }
-  }
-
-  return posts;
-};
+import {Howl} from "howler";
+import { Post, getPosts } from "@/utils/get-posts";
 
 const trackNameToHowl: Map<string, Howl> = new Map();
 
 const handleSongClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-  const name = event.currentTarget.dataset.name;
-  const path = event.currentTarget.dataset.path;
+  const button = event.currentTarget;
+  const name = button.dataset.name;
+  const path = button.dataset.path;
+
+  trackNameToHowl.forEach((value, key) => {
+    value.pause();
+  });
 
   if (name && path) {
     if (!trackNameToHowl.has(name)) {
@@ -82,9 +34,12 @@ const handleSongClick = async (event: React.MouseEvent<HTMLButtonElement, MouseE
     const howl = trackNameToHowl.get(name);
 
     if (howl) {
-      Howler.stop();
-
-      howl.play();
+      if (button.innerText === "Play") {
+        howl.play();
+        button.innerText = "Pause";
+      } else {
+        button.innerText = "Play";
+      }
     }
   }
 };
@@ -108,7 +63,6 @@ export default function App() {
 
   return (
     <main>
-      <h1 className="title is-size-1">MelodyLink</h1>
       <ul style={{maxWidth:"800px",marginLeft:"auto",marginRight:"auto"}}>
         {
           posts.map((post, postKey) => {
