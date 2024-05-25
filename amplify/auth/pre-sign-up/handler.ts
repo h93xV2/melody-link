@@ -3,9 +3,9 @@ import { CognitoIdentityProviderClient, ListUsersCommand } from "@aws-sdk/client
 
 export const handler: PreSignUpTriggerHandler = async (event) => {
   const userPoolId = event.userPoolId;
-  const birthdate = new Date(event.request.userAttributes["preferred_username"]);
+  const preferredUsername = new Date(event.request.userAttributes["preferred_username"]);
 
-  const client = new CognitoIdentityProviderClient();
+  const client = new CognitoIdentityProviderClient({region: event.region});
   const input = { // ListUsersRequest
     UserPoolId: userPoolId, // required
     AttributesToGet: [ // SearchedAttributeNamesListType
