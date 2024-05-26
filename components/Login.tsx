@@ -16,7 +16,9 @@ function Login({ user }: { user?: AuthUser }) {
     }
   }, [user]);
 
-  return <></>;
+  return <main>
+    <h1 className="is-size-1">Logging you in ...</h1>
+  </main>;
 }
 
 function LoginWrapper() {

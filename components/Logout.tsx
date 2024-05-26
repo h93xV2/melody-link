@@ -2,6 +2,7 @@
 
 import { signOut } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
+import { Howler } from "howler";
 
 export default function Logout() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function Logout() {
       onClick={async () => {
         await signOut();
         router.push("/login");
+        Howler.stop();
       }}
       className="button is-primary"
     >

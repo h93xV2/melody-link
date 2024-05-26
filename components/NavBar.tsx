@@ -9,7 +9,10 @@ import Link from "next/link";
 const getNavLinks = (pathname: string, user?: AuthUser) => {
   if (user) {
     return (
-      <Link href="/profile" className={`navbar-item${pathname === '/profile' ? ' is-selected' : ''}`}>
+      <Link
+        onClick={() => Howler.stop()}
+        href="/profile" className={`navbar-item${pathname === '/profile' ? ' is-selected' : ''}`}
+      >
         Profile
       </Link>
     );

@@ -11,7 +11,7 @@ import { Post, getPosts } from "@/utils/get-posts";
 import PostList from "@/components/PostList";
 
 export default function App() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Post[] | undefined>();
 
   useEffect(() => {
     let authMode: any;
@@ -21,7 +21,13 @@ export default function App() {
     }).catch((reason) => {
       authMode = "identityPool";
     }).finally(() => {
-      getPosts(authMode).then((results) => setPosts([...results])).catch((reason) => {
+      getPosts(authMode).then((results) => {
+        results.sort((a, b) => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+
+        setPosts([...results]);
+      }).catch((reason) => {
         console.error("Unable to fetch posts %o", reason);
       });
     });
