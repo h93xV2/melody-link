@@ -12,7 +12,8 @@ type Post = {
   tracks: Track[],
   artist: string,
   createdAt: string,
-  owner?: string
+  owner?: string,
+  id: string
 };
 
 const convertDataToPosts = (data: any) => {
@@ -40,7 +41,8 @@ const convertDataToPosts = (data: any) => {
         tracks,
         artist: result.artist,
         createdAt: result.createdAt,
-        owner: result.owner
+        owner: result.owner,
+        id: result.id
       });
     }
   }
@@ -59,9 +61,9 @@ const getPosts = async (authMode: any): Promise<Post[]> => {
   return convertDataToPosts(data);
 };
 
-const getPostsForOwner = async (owner: string) => {
+const getPostsForArtist = async (artist: string) => {
   const client = generateClient<Schema>();
-  const {data, errors} = (await client.models.Post.list({filter: {owner: {eq: owner}}}));
+  const {data, errors} = (await client.models.Post.list({filter: {artist: {eq: artist}}}));
 
   if (errors) {
     console.error("Unable to list posts: %o", errors);
@@ -70,5 +72,5 @@ const getPostsForOwner = async (owner: string) => {
   return convertDataToPosts(data);
 };
 
-export { getPosts, getPostsForOwner };
+export { getPosts, getPostsForArtist };
 export type { Track, Post };

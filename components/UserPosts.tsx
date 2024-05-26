@@ -1,24 +1,20 @@
-"use client";
-
-import { Post, getPostsForOwner, getPosts } from "@/utils/get-posts";
-import { getCurrentUser } from "aws-amplify/auth";
+import { Post, getPostsForArtist, getPosts } from "@/utils/get-posts";
 import { useEffect, useState } from "react";
+import PostList from "./PostList";
 
-function UserPosts() {
+function UserPosts(props: {userName: string}) {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    getCurrentUser().then(result => {
-      console.log(result.userId);
-      getPostsForOwner(result.userId).then(result => {
-        console.log(result);
-      });
-      getPosts("userPool").then(console.log);
+    getPostsForArtist(props.userName).then((result: Post[]) => {
+      setPosts(result);
     });
   }, []);
 
   return (
-    <></>
+    <main>
+      <PostList posts={posts} isDeleteVisible={true} />
+    </main>
   );
 }
 

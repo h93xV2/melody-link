@@ -23,7 +23,7 @@ function ProfileTabs(props: {userName: string}) {
         {
           label: "Your Posts",
           value: "2",
-          content: <UserPosts />
+          content: <UserPosts userName={props.userName} />
         }
       ]}
     />
