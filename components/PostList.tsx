@@ -96,7 +96,7 @@ function PostList(props: {posts?: Post[], isDeleteVisible?: boolean}) {
                 <ul>
                   {
                     post.tracks.map((track, trackKey) => {
-                      return (<li key={trackKey}>
+                      return (<li key={trackKey} className="mb-1">
                         <button
                           className="button is-small mr-2"
                           onClick={handleSongClick}
